@@ -502,7 +502,7 @@
                   "identifiers": {
                     "properties": {
                       "identifier": {
-                        "type": "text"
+                        "type": "keyword"
                       },
                       "scheme": {
                         "type": "keyword"

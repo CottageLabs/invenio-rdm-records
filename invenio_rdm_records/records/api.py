@@ -42,10 +42,10 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
 
+from invenio_notify.records.systemfields.endorsement_list_field import EndorsementListField
 from invenio_rdm_records.records.systemfields.deletion_status import (
     RecordDeletionStatusEnum,
 )
-
 from . import models
 from .dumpers import (
     CombinedSubjectsDumperExt,
@@ -112,7 +112,7 @@ class CommonFieldsMixin:
     versions_model_cls = models.RDMVersionsState
     parent_record_cls = RDMParent
 
-    schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
+    schema = ConstantField("$schema", "local://records/record-v7.0.0.json")
 
     dumper = SearchDumper(
         extensions=[
@@ -470,7 +470,7 @@ class RDMRecord(CommonFieldsMixin, Record):
     model_cls = models.RDMRecordMetadata
 
     index = IndexField(
-        "rdmrecords-records-record-v7.0.0", search_alias="rdmrecords-records"
+        "rdmrecords-records-record-v8.0.0", search_alias="rdmrecords-records"
     )
 
     files = FilesField(
@@ -510,6 +510,8 @@ class RDMRecord(CommonFieldsMixin, Record):
     deletion_status = RecordDeletionStatusField()
 
     tombstone = TombstoneField()
+
+    endorsements = EndorsementListField()
 
     @classmethod
     def next_latest_published_record_by_parent(cls, parent):

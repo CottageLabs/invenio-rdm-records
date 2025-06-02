@@ -480,12 +480,24 @@
             "type": "integer",
             "description": "Total number of reviews by this reviewer"
           },
-          "endorsement_urls": {
+          "endorsement_list": {
             "type": "array",
-            "description": "URLs related to the endorsements",
+            "description": "List of endorsement details",
             "items": {
-              "type": "string",
-              "format": "uri"
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL related to the endorsement"
+                },
+                "created": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Creation timestamp of the endorsement"
+                }
+              }
             }
           }
         }

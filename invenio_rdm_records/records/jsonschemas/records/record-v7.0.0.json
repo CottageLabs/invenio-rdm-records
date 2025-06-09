@@ -499,6 +499,26 @@
                 }
               }
             }
+          },
+          "review_list": {
+            "type": "array",
+            "description": "List of review details",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL related to the review"
+                },
+                "created": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Creation timestamp of the review"
+                }
+              }
+            }
           }
         }
       }

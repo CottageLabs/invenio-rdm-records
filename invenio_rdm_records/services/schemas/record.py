@@ -58,12 +58,8 @@ class InternalNoteSchema(Schema):
         unknown = EXCLUDE
 
 
-class EndorsementItemSchema(Schema):
-    created = EDTFDateTimeString(dump_only=True)
-    url = URL(dump_only=True)
-
-
-class ReviewItemSchema(Schema):
+class ReviewerItemSchema(Schema):
+    """Schema for reviewer item details (endorsements and reviews)."""
     created = EDTFDateTimeString(dump_only=True)
     url = URL(dump_only=True)
 
@@ -79,9 +75,9 @@ class EndorsementSchema(Schema):
     reviewer_id = fields.Integer(required=True)
     review_count = fields.Integer()
     reviewer_name = SanitizedUnicode(required=True)
-    endorsement_list = fields.List(fields.Nested(EndorsementItemSchema), required=True)
+    endorsement_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
     endorsement_count = fields.Integer(validate=validate.Range(min=0))
-    review_list = fields.List(fields.Nested(ReviewItemSchema), required=True)
+    review_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
 
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):

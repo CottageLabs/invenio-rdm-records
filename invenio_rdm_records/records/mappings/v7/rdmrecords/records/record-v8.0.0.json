@@ -1564,6 +1564,17 @@
                 "type": "keyword"
               }
             }
+          },
+          "review_list": {
+            "type": "object",
+            "properties": {
+              "created": {
+                "type": "date"
+              },
+              "url": {
+                "type": "keyword"
+              }
+            }
           }
         }
       }

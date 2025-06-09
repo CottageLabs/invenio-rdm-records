@@ -42,7 +42,6 @@ from invenio_vocabularies.contrib.subjects.api import Subject
 from invenio_vocabularies.records.api import Vocabulary
 from invenio_vocabularies.records.systemfields.relations import CustomFieldsRelation
 
-from invenio_notify.records.systemfields.endorsement_list_field import EndorsementListField
 from invenio_rdm_records.records.systemfields.deletion_status import (
     RecordDeletionStatusEnum,
 )
@@ -55,6 +54,7 @@ from .dumpers import (
     StatisticsDumperExt,
     SubjectHierarchyDumperExt,
 )
+from .dumpers.endorsements import EndorsementsDumperExt
 from .systemfields import (
     HasDraftCheckField,
     IsVerifiedField,
@@ -66,6 +66,7 @@ from .systemfields import (
 )
 from .systemfields.access.protection import Visibility
 from .systemfields.draft_status import DraftStatus
+from .systemfields.endorsements import EndorsementField
 
 
 #
@@ -112,7 +113,7 @@ class CommonFieldsMixin:
     versions_model_cls = models.RDMVersionsState
     parent_record_cls = RDMParent
 
-    schema = ConstantField("$schema", "local://records/record-v7.0.0.json")
+    schema = ConstantField("$schema", "local://records/record-v6.0.0.json")
 
     dumper = SearchDumper(
         extensions=[
@@ -122,6 +123,7 @@ class CommonFieldsMixin:
             CombinedSubjectsDumperExt(),
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
             StatisticsDumperExt("stats"),
+            EndorsementsDumperExt("endorsements"),
             SubjectHierarchyDumperExt(),
         ]
     )
@@ -504,7 +506,7 @@ class RDMRecord(CommonFieldsMixin, Record):
 
     tombstone = TombstoneField()
 
-    endorsements = EndorsementListField()
+    endorsements = EndorsementField()
 
     @classmethod
     def next_latest_published_record_by_parent(cls, parent):

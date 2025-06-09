@@ -28,6 +28,7 @@ from marshmallow_utils.fields import (
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
+from .endorsements import EndorsementItemSchema
 from .files import FilesSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
@@ -92,6 +93,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     deletion_status = fields.Nested(DeletionStatusSchema, dump_only=True)
     internal_notes = fields.List(fields.Nested(InternalNoteSchema))
     stats = NestedAttribute(StatsSchema, dump_only=True)
+    endorsements = fields.List(fields.Nested(EndorsementItemSchema), dump_only=True)
     # schema_version = fields.Integer(dump_only=True)
 
     field_dump_permissions = {

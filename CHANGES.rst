@@ -12,6 +12,37 @@
 Changes
 =======
 
+Version v19.0.0 (released 2025-06-03)
+
+- setup: version bump on dependent packages
+- fix: added permissions for getting/setting transfer metadata
+  * Added extra permissions to get/update transfer metadata. These permissions
+  are not used by REST API, they are used in background tasks, at this
+  moment for fetch transfer (not enabled by default and not supported in UI)
+- test: fixed test - file key is now required
+- permissions: multipart upload with local fs storage
+- Implementation of RFC 0072 - Pluggable transfer types
+  * IfFileIsLocal is not used anymore as it was handling just one type of transport
+  * Switched to IfTransferType permission generators
+- installation: remove collections dependency
+
+Version v18.14.0 (released 2025-06-02)
+
+- config: make community request type classes customizable
+    * Allows to customize community submissions and inclusion request type
+      classes via the ``RDM_COMMUNITY_SUBMISSION_REQUEST_CLS`` and
+      ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` config variables.
+
+Version v18.13.0 (released 2025-06-02)
+
+- Move collections implementaiton to Invenio-Collections
+
+Version v18.12.0 (released 2025-05-23)
+
+- resources: expose get current revision of record
+- deposit: fix global server errors in frontend
+- feedback-ui: Add specific ID to disconnected feedback form
+
 Version v18.11.0 (released 2025-05-16)
 
 - deposit-ui: fix upload files error state

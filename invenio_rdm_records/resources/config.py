@@ -238,16 +238,19 @@ class RDMRecordResourceConfig(RecordResourceConfig, ConfiguratorMixin):
     routes["set-record-quota"] = "/<pid_value>/quota"
     routes["set-user-quota"] = "/users/<pid_value>/quota"
     routes["item-revision-list"] = "/<pid_value>/revisions"
+    routes["item-revision"] = "/<pid_value>/revisions/<revision_id>"
 
     request_view_args = {
         "pid_value": ma.fields.Str(),
         "scheme": ma.fields.Str(),
+        "revision_id": ma.fields.Str(),
     }
 
     request_read_args = {
         "style": ma.fields.Str(),
         "locale": ma.fields.Str(),
         "include_deleted": ma.fields.Bool(),
+        "include_previous": ma.fields.Bool(),
     }
 
     request_body_parsers = {
@@ -327,6 +330,7 @@ class RDMRecordMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "item": "/media-files/<key>",
         "item-content": "/media-files/<key>/content",
         "item-commit": "/media-files/<key>/commit",
+        "item-multipart-content": "/media-files/<path:key>/content/<int:part>",
         "list-archive": "/media-files-archive",
     }
 
@@ -367,6 +371,7 @@ class RDMDraftMediaFilesResourceConfig(FileResourceConfig, ConfiguratorMixin):
         "item": "/media-files/<key>",
         "item-content": "/media-files/<key>/content",
         "item-commit": "/media-files/<key>/commit",
+        "item-multipart-content": "/media-files/<path:key>/content/<int:part>",
         "list-archive": "/media-files-archive",
     }
 

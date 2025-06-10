@@ -211,14 +211,23 @@ class DisconnectedFormFeedback extends Component {
         ? "suggestive"
         : initialFeedback;
 
-    // if no field is specified on the backend, then the message is on the `_schema` field
-    const backendErrorMessage = errors._schema;
+    // if no field is specified on the backend, then the validation message is on the `_schema` field
+    // if the backend returns an explicit message e.g server error, then we use that instead of the default one
+    const backendErrorMessage = errors.message || errors._schema;
 
-    // Retrieve the corresponding icon and type
-    const { icon, type } = feedbackConfig[feedback] || {};
+    // Retrieve the corresponding icon and type if the feedback is a valid key,
+    // else fallback to warning.
+    const { icon, type } = feedbackConfig[feedback] || feedbackConfig["warning"];
 
+    // generate dynamic id for easy getElementById calls.
+    // see feedbackConfig for possible values.
     return (
-      <Message visible {...{ [type]: true }} className="flashed top attached">
+      <Message
+        visible
+        {...{ [type]: true }}
+        className="flashed top attached"
+        id={type + "-feedback-div"}
+      >
         <Grid container>
           <Grid.Column width={15} textAlign="left">
             <strong>

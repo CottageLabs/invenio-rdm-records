@@ -50,12 +50,14 @@ from .dumpers import (
     CombinedSubjectsDumperExt,
     EDTFDumperExt,
     EDTFListDumperExt,
+    EndorsementsDumperExt,
     GrantTokensDumperExt,
     StatisticsDumperExt,
     SubjectHierarchyDumperExt,
 )
-from .dumpers.endorsements import EndorsementsDumperExt
+
 from .systemfields import (
+    EndorsementsField,
     HasDraftCheckField,
     IsVerifiedField,
     ParentRecordAccessField,
@@ -66,7 +68,6 @@ from .systemfields import (
 )
 from .systemfields.access.protection import Visibility
 from .systemfields.draft_status import DraftStatus
-from .systemfields.endorsements import EndorsementField
 
 
 #
@@ -506,7 +507,7 @@ class RDMRecord(CommonFieldsMixin, Record):
 
     tombstone = TombstoneField()
 
-    endorsements = EndorsementField()
+    endorsements = EndorsementsField()
 
     @classmethod
     def next_latest_published_record_by_parent(cls, parent):

@@ -1663,8 +1663,27 @@
           "review_count": {
             "type": "integer"
           },
-          "endorsement_urls": {
-            "type": "keyword"
+          "endorsement_list": {
+            "type": "object",
+            "properties": {
+              "created": {
+                "type": "date"
+              },
+              "url": {
+                "type": "keyword"
+              }
+            }
+          },
+          "review_list": {
+            "type": "object",
+            "properties": {
+              "created": {
+                "type": "date"
+              },
+              "url": {
+                "type": "keyword"
+              }
+            }
           }
         }
       }

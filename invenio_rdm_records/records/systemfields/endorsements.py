@@ -60,7 +60,9 @@ class EndorsementsField(SystemField):
         if endorsements:
             return endorsements
 
-        endorsements = get_with_cache(self, record, _get_record_endorsements)
+        # TODO - confirm using cache is the right approach here
+        #endorsements = get_with_cache(self, record, _get_record_endorsements)
+        endorsements = _get_record_endorsements(record)
         record["endorsements"] = endorsements
 
         return endorsements

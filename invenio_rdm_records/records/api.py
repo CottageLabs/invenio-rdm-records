@@ -45,17 +45,19 @@ from invenio_vocabularies.records.systemfields.relations import CustomFieldsRela
 from invenio_rdm_records.records.systemfields.deletion_status import (
     RecordDeletionStatusEnum,
 )
-
 from . import models
 from .dumpers import (
     CombinedSubjectsDumperExt,
     EDTFDumperExt,
     EDTFListDumperExt,
+    EndorsementsDumperExt,
     GrantTokensDumperExt,
     StatisticsDumperExt,
     SubjectHierarchyDumperExt,
 )
+
 from .systemfields import (
+    EndorsementsField,
     HasDraftCheckField,
     IsVerifiedField,
     ParentRecordAccessField,
@@ -122,6 +124,7 @@ class CommonFieldsMixin:
             CombinedSubjectsDumperExt(),
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
             StatisticsDumperExt("stats"),
+            EndorsementsDumperExt("endorsements"),
             SubjectHierarchyDumperExt(),
         ]
     )
@@ -463,7 +466,7 @@ class RDMRecord(CommonFieldsMixin, Record):
     model_cls = models.RDMRecordMetadata
 
     index = IndexField(
-        "rdmrecords-records-record-v7.0.0", search_alias="rdmrecords-records"
+        "rdmrecords-records-record-v8.0.0", search_alias="rdmrecords-records"
     )
 
     files = FilesField(
@@ -503,6 +506,8 @@ class RDMRecord(CommonFieldsMixin, Record):
     deletion_status = RecordDeletionStatusField()
 
     tombstone = TombstoneField()
+
+    endorsements = EndorsementsField()
 
     @classmethod
     def next_latest_published_record_by_parent(cls, parent):

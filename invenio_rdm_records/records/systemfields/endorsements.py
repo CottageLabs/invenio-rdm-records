@@ -41,7 +41,7 @@ def _get_record_endorsements(record):
     except Exception:
         endorsements = None
 
-    return endorsements or current_endorsement_service.get_endorsement_info(record.id)
+    return endorsements or current_endorsement_service.get_endorsement_info(record.parent.id)
 
 
 class EndorsementsField(SystemField):

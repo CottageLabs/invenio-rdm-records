@@ -34,7 +34,7 @@ class EndorsementsDumperExt(SearchDumperExt):
         if record.is_draft:
             return
 
-        endorsements = current_endorsement_service.get_endorsement_info(record.id)
+        endorsements = current_endorsement_service.get_endorsement_info(record.parent.id)
         data[self.key] = endorsements
 
     def load(self, data, record_cls):

@@ -117,6 +117,12 @@ def is_record_or_draft_and_has_parent_doi(record, ctx):
     )
 
 
+def is_record_owner(record, ctx):
+    from flask import g
+    return (is_record(record, ctx)
+            and record.parent.access.owner.owner_id == g.identity.id)
+
+
 def has_doi(record, ctx):
     """Determine if a record has a DOI."""
     pids = record.pids or {}
@@ -786,8 +792,8 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
             ),
         ),
         # Endorsements Requests
-        "endorsement_request": RecordEndpointLink("endorsement_request.send", ),
-        "endorsement_request_reviewers": RecordEndpointLink("endorsement_request.list_reviewers")
+        "endorsement_request": RecordEndpointLink("endorsement_request.send", when=is_record_owner),
+        "endorsement_request_reviewers": RecordEndpointLink("endorsement_request.list_reviewers", when=is_record_owner)
     }
 
     nested_links_item = [

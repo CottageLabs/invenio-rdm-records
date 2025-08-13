@@ -1672,9 +1672,6 @@
               "url": {
                 "type": "keyword"
               },
-              "version": {
-                "type": "text"
-              },
               "index": {
                 "type": "integer"
               }
@@ -1688,9 +1685,6 @@
               },
               "url": {
                 "type": "keyword"
-              },
-              "version": {
-                "type": "text"
               },
               "index": {
                 "type": "integer"

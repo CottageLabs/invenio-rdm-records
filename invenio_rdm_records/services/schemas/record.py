@@ -63,7 +63,6 @@ class ReviewerItemSchema(Schema):
     """Schema for reviewer item details (endorsements and reviews)."""
     created = EDTFDateTimeString(dump_only=True)
     url = URL(dump_only=True)
-    version = fields.String(dump_only=True)
     index = fields.Integer(dump_only=True)
 
 

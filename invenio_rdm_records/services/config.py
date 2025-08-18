@@ -68,9 +68,6 @@ from requests import Request
 from werkzeug.local import LocalProxy
 
 from invenio_rdm_records.records.processors.tiles import TilesProcessor
-
-from ..records import RDMDraft, RDMRecord
-from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 from . import facets
 from .components import DefaultRecordsComponents
 from .customizations import (
@@ -99,6 +96,8 @@ from .search_params import (
     StatusParam,
 )
 from .sort import VerifiedRecordsSortParam
+from ..records import RDMDraft, RDMRecord
+from ..records.api import RDMDraftMediaFiles, RDMRecordMediaFiles
 
 
 def is_draft_and_has_review(record, ctx):
@@ -116,6 +115,12 @@ def is_record_or_draft_and_has_parent_doi(record, ctx):
     return (is_record(record, ctx) or is_draft(record, ctx)) and has_doi(
         record.parent, ctx
     )
+
+
+def is_record_owner(record, ctx):
+    from flask import g
+    return (is_record(record, ctx)
+            and record.parent.access.owner.owner_id == g.identity.id)
 
 
 def has_doi(record, ctx):
@@ -221,16 +226,16 @@ class RDMSearchDraftsOptions(SearchDraftsOptions, SearchOptionsMixin):
     }
 
     params_interpreters_cls = [
-        SharedOrMyDraftsParam
-    ] + SearchDraftsOptions.params_interpreters_cls
+                                  SharedOrMyDraftsParam
+                              ] + SearchDraftsOptions.params_interpreters_cls
 
 
 class RDMSearchVersionsOptions(SearchVersionsOptions, SearchOptionsMixin):
     """Search options for record versioning search."""
 
     params_interpreters_cls = [
-        PublishedRecordsParam
-    ] + SearchVersionsOptions.params_interpreters_cls
+                                  PublishedRecordsParam
+                              ] + SearchVersionsOptions.params_interpreters_cls
 
 
 #
@@ -438,7 +443,7 @@ class WithFileLinks(type):
                 f"{cls.name_of_file_blueprint}.create_commit",
                 params=["pid_value", "key"],
                 when=lambda file_draft, ctx: (
-                    cls.allow_upload and is_draft(file_draft.record, ctx)
+                        cls.allow_upload and is_draft(file_draft.record, ctx)
                 ),
             ),
             "iiif_canvas": FileEndpointLink(
@@ -786,6 +791,9 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
                 else None
             ),
         ),
+        # Endorsements Requests
+        "endorsement_request": RecordEndpointLink("endorsement_request.send", when=is_record_owner),
+        "endorsement_request_reviewers": RecordEndpointLink("endorsement_request.list_reviewers", when=is_record_owner)
     }
 
     nested_links_item = [

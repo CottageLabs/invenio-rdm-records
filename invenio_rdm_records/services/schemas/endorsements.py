@@ -9,14 +9,29 @@
 
 """Schema for record endorsements."""
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate, EXCLUDE
+from marshmallow.fields import URL
+from marshmallow_utils.fields import EDTFDateTimeString, SanitizedUnicode
 
-class EndorsementItemSchema(Schema):
-    reviewer_id = fields.Int(required=True)
-    reviewer_name = fields.Str(required=True)
-    endorsement_count = fields.Int(required=True)
-    review_count = fields.Int(required=True)
-    endorsement_urls = fields.List(fields.Url(), required=True)
 
-class EndorsementsSchema(Schema):
-    endorsements = fields.List(fields.Nested(EndorsementItemSchema), required=True)
+class ReviewerItemSchema(Schema):
+    """Schema for reviewer item details (endorsements and reviews)."""
+    created = EDTFDateTimeString(dump_only=True)
+    url = URL(dump_only=True)
+    index = fields.Integer(dump_only=True)
+
+
+class EndorsementSchema(Schema):
+    """Schema for endorsements."""
+
+    class Meta:
+        """Meta attributes for the schema."""
+
+        unknown = EXCLUDE
+
+    reviewer_id = fields.Integer(required=True)
+    review_count = fields.Integer()
+    reviewer_name = SanitizedUnicode(required=True)
+    endorsement_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
+    endorsement_count = fields.Integer(validate=validate.Range(min=0))
+    review_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)

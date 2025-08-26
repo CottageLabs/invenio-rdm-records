@@ -15,11 +15,10 @@ from flask import current_app
 from invenio_drafts_resources.services.records.schema import RecordSchema
 from invenio_i18n import lazy_gettext as _
 from invenio_records_resources.services.custom_fields import CustomFieldsSchema
-from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump, validate
+from marshmallow import EXCLUDE, Schema, ValidationError, fields, post_dump
 from marshmallow_utils.fields import (
     EDTFDateTimeString,
     NestedAttribute,
-    URL,
 )
 from marshmallow_utils.fields import (
     SanitizedHTML,
@@ -28,7 +27,7 @@ from marshmallow_utils.fields import (
 from marshmallow_utils.permissions import FieldPermissionsMixin
 
 from .access import AccessSchema
-from .endorsements import EndorsementItemSchema
+from .endorsements import EndorsementSchema
 from .files import FilesSchema
 from .metadata import MetadataSchema
 from .parent import RDMParentSchema
@@ -57,29 +56,6 @@ class InternalNoteSchema(Schema):
         """Meta attributes for the schema."""
 
         unknown = EXCLUDE
-
-
-class ReviewerItemSchema(Schema):
-    """Schema for reviewer item details (endorsements and reviews)."""
-    created = EDTFDateTimeString(dump_only=True)
-    url = URL(dump_only=True)
-    index = fields.Integer(dump_only=True)
-
-
-class EndorsementSchema(Schema):
-    """Schema for endorsements."""
-
-    class Meta:
-        """Meta attributes for the schema."""
-
-        unknown = EXCLUDE
-
-    reviewer_id = fields.Integer(required=True)
-    review_count = fields.Integer()
-    reviewer_name = SanitizedUnicode(required=True)
-    endorsement_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
-    endorsement_count = fields.Integer(validate=validate.Range(min=0))
-    review_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
 
 
 class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
@@ -116,9 +92,8 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     deletion_status = fields.Nested(DeletionStatusSchema, dump_only=True)
     internal_notes = fields.List(fields.Nested(InternalNoteSchema))
     stats = NestedAttribute(StatsSchema, dump_only=True)
-    endorsements = fields.List(fields.Nested(EndorsementItemSchema), dump_only=True)
     # schema_version = fields.Integer(dump_only=True)
-    endorsements = fields.List(fields.Nested(EndorsementSchema))
+    endorsements = fields.List(fields.Nested(EndorsementSchema), dump_only=True)
 
     field_dump_permissions = {
         "internal_notes": "manage_internal",

@@ -1533,6 +1533,14 @@
           }
         }
       },
+      "notify": {
+        "type": "object",
+        "properties": {
+          "has_reviews": {
+            "type": "boolean"
+          }
+        }
+      },
       "endorsements": {
         "type": "nested",
         "properties": {

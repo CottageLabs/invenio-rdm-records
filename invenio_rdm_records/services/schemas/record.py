@@ -30,6 +30,7 @@ from .access import AccessSchema
 from .endorsements import EndorsementSchema
 from .files import FilesSchema
 from .metadata import MetadataSchema
+from .notify import NotifySchema
 from .parent import RDMParentSchema
 from .parent.access import Agent
 from .pids import PIDSchema
@@ -94,6 +95,7 @@ class RDMRecordSchema(RecordSchema, FieldPermissionsMixin):
     stats = NestedAttribute(StatsSchema, dump_only=True)
     # schema_version = fields.Integer(dump_only=True)
     endorsements = fields.List(fields.Nested(EndorsementSchema), dump_only=True)
+    notify = NestedAttribute(NotifySchema, dump_only=True)
 
     field_dump_permissions = {
         "internal_notes": "manage_internal",

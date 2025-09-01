@@ -14,11 +14,13 @@ from .draft_status import DraftStatus
 from .endorsements import EndorsementsField
 from .has_draftcheck import HasDraftCheckField
 from .is_verified import IsVerifiedField
+from .notify import NotifyField
 from .statistics import RecordStatisticsField
 from .tombstone import TombstoneField
 
 __all__ = (
     "EndorsementsField",
+    "NotifyField",
     "DraftStatus",
     "HasDraftCheckField",
     "IsVerifiedField",

@@ -120,6 +120,7 @@ def is_record_or_draft_and_has_parent_doi(record, ctx):
 def is_record_owner(record, ctx):
     from flask import g
     return (is_record(record, ctx)
+            and hasattr(g, "identity") and hasattr(g.identity, "id")
             and record.parent.access.owner.owner_id == g.identity.id)
 
 
@@ -200,6 +201,7 @@ class RDMSearchOptions(SearchOptions, SearchOptionsMixin):
         "resource_type": facets.resource_type,
         "languages": facets.language,
         "access_status": facets.access_status,
+        "has_reviews": facets.has_reviews,
     }
 
     # Override params interpreters to avoid having duplicated SortParam.

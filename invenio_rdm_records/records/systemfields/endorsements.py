@@ -6,10 +6,11 @@
 # it under the terms of the MIT License; see LICENSE file for more details.
 
 """Cached transient field for record endorsements."""
-from invenio_notify.proxies import current_endorsement_service
 from invenio_records.systemfields import SystemField
 from invenio_search.proxies import current_search_client
 from invenio_search.utils import build_alias_name
+
+from invenio_notify.proxies import current_endorsement_service
 
 
 def get_with_cache(field: SystemField, record, get_fn):
@@ -27,8 +28,6 @@ def get_with_cache(field: SystemField, record, get_fn):
 
 def _get_record_endorsements(record):
     """Get the record's endorsements from either record or search index."""
-    endorsements = None
-
     try:
         # note: this field is dumped into the record's data before indexing
         #       by the search dumper extension "EndorsementsDumperExt"
@@ -56,16 +55,13 @@ class EndorsementsField(SystemField):
             # returns the field itself.
             return self
 
-        endorsements = record.get("endorsements", None)
-        if endorsements:
-            return endorsements
+        if not record.get("endorsements"):
+            # TODO - confirm using cache is the right approach here
+            # endorsements = get_with_cache(self, record, _get_record_endorsements)
+            endorsements = _get_record_endorsements(record)
+            record["endorsements"] = endorsements
 
-        # TODO - confirm using cache is the right approach here
-        #endorsements = get_with_cache(self, record, _get_record_endorsements)
-        endorsements = _get_record_endorsements(record)
-        record["endorsements"] = endorsements
-
-        return endorsements
+        return record["endorsements"]
 
     def pre_commit(self, record, **kwargs):
         """Ensure that the endorsements stay transient."""

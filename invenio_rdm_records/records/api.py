@@ -575,13 +575,23 @@ class RDMRecord(CommonFieldsMixin, Record):
         # We need no_autoflush because the record.versions access triggers automatically
         # one
         with db.session.no_autoflush:
-            records = cls.get_records_by_parent(parent)
-            for record in records:
-                latest_version_index = record.versions.latest_index
-                if latest_version_index > 1:
-                    if record.versions.index == latest_version_index - 1:
-                        return record
-            return None
+            # Get latest index
+            versions_state = cls.versions_model_cls.query.filter_by(
+                parent_id=parent.id
+            ).one_or_none()
+
+            if not versions_state or versions_state.latest_index <= 1:
+                return None
+
+            # Find record with specific index
+            rec_model = cls.model_cls.query.filter_by(
+                parent_id=parent.id,
+                index=versions_state.latest_index - 1
+            ).first()
+
+            return cls(rec_model.data, model=rec_model, parent=parent) if rec_model else None
+
+        return None
 
 
 RDMFileRecord.record_cls = RDMRecord

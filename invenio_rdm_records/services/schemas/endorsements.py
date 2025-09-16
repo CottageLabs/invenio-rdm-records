@@ -14,8 +14,8 @@ from marshmallow.fields import URL
 from marshmallow_utils.fields import EDTFDateTimeString, SanitizedUnicode
 
 
-class ReviewerItemSchema(Schema):
-    """Schema for reviewer item details (endorsements and reviews)."""
+class ActorItemSchema(Schema):
+    """Schema for actor item details (endorsements and reviews)."""
     created = EDTFDateTimeString(dump_only=True)
     url = URL(dump_only=True)
     index = fields.Integer(dump_only=True)
@@ -29,9 +29,9 @@ class EndorsementSchema(Schema):
 
         unknown = EXCLUDE
 
-    reviewer_id = fields.Integer(required=True)
+    actor_id = fields.Integer(required=True)
     review_count = fields.Integer()
-    reviewer_name = SanitizedUnicode(required=True)
-    endorsement_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
+    actor_name = SanitizedUnicode(required=True)
+    endorsement_list = fields.List(fields.Nested(ActorItemSchema), required=True)
     endorsement_count = fields.Integer(validate=validate.Range(min=0))
-    review_list = fields.List(fields.Nested(ReviewerItemSchema), required=True)
+    review_list = fields.List(fields.Nested(ActorItemSchema), required=True)

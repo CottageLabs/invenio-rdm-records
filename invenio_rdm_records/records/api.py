@@ -54,8 +54,8 @@ from .dumpers import (
     GrantTokensDumperExt,
     StatisticsDumperExt,
     SubjectHierarchyDumperExt,
+    NotifyDumperExt,
 )
-
 from .systemfields import (
     EndorsementsField,
     HasDraftCheckField,
@@ -65,6 +65,7 @@ from .systemfields import (
     RecordDeletionStatusField,
     RecordStatisticsField,
     TombstoneField,
+    NotifyField,
 )
 from .systemfields.access.protection import Visibility
 from .systemfields.draft_status import DraftStatus
@@ -125,6 +126,7 @@ class CommonFieldsMixin:
             CustomFieldsDumperExt(fields_var="RDM_CUSTOM_FIELDS"),
             StatisticsDumperExt("stats"),
             EndorsementsDumperExt("endorsements"),
+            NotifyDumperExt("notify"),
             SubjectHierarchyDumperExt(),
         ]
     )
@@ -370,9 +372,9 @@ def get_files_quota(record=None):
     # FILES_REST_DEFAULT_MAX_FILE_SIZE respectively
     return dict(
         quota_size=current_app.config.get("RDM_FILES_DEFAULT_QUOTA_SIZE")
-        or current_app.config.get("FILES_REST_DEFAULT_QUOTA_SIZE"),
+                   or current_app.config.get("FILES_REST_DEFAULT_QUOTA_SIZE"),
         max_file_size=current_app.config.get("RDM_FILES_DEFAULT_MAX_FILE_SIZE")
-        or current_app.config.get("FILES_REST_DEFAULT_MAX_FILE_SIZE"),
+                      or current_app.config.get("FILES_REST_DEFAULT_MAX_FILE_SIZE"),
     )
 
 
@@ -481,8 +483,8 @@ class RDMRecord(CommonFieldsMixin, Record):
         dump=True,
         # Don't dump files if record is public and files restricted.
         dump_entries=lambda record: not (
-            record.access.protection.record == Visibility.PUBLIC.value
-            and record.access.protection.files == Visibility.RESTRICTED.value
+                record.access.protection.record == Visibility.PUBLIC.value
+                and record.access.protection.files == Visibility.RESTRICTED.value
         ),
         file_cls=RDMFileRecord,
         # Don't create
@@ -515,6 +517,7 @@ class RDMRecord(CommonFieldsMixin, Record):
     tombstone = TombstoneField()
 
     endorsements = EndorsementsField()
+    notify = NotifyField()
 
     @classmethod
     def next_latest_published_record_by_parent(cls, parent):
@@ -555,9 +558,9 @@ class RDMRecord(CommonFieldsMixin, Record):
         """
         latest_record = cls.get_latest_by_parent(parent)
         if (
-            latest_record
-            and latest_record.deletion_status
-            != RecordDeletionStatusEnum.PUBLISHED.value
+                latest_record
+                and latest_record.deletion_status
+                != RecordDeletionStatusEnum.PUBLISHED.value
         ):
             return None
         return latest_record

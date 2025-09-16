@@ -25,7 +25,6 @@ from invenio_records_resources.services.records.queryparser.transformer import (
 import invenio_rdm_records.services.communities.moderation as communities_moderation
 from invenio_rdm_records.services.components.pids import validate_optional_doi
 from invenio_rdm_records.services.components.verified import UserModerationHandler
-
 from . import tokens
 from .requests.community_inclusion import CommunityInclusion
 from .requests.community_submission import CommunitySubmission
@@ -222,6 +221,13 @@ RDM_FACETS = {
             },
         },
     },
+
+    "has_reviews": {
+        "facet": facets.has_reviews,
+        "ui": {
+            "field": "notify.has_reviews",
+        },
+    },
 }
 
 RDM_SEARCH_SORT_BY_VERIFIED = False
@@ -272,7 +278,7 @@ RDM_SORT_OPTIONS = {
 
 
 RDM_SEARCH = {
-    "facets": ["access_status", "file_type", "resource_type"],
+    "facets": ["access_status", "file_type", "resource_type", "has_reviews"],
     "sort": [
         "bestmatch",
         "newest",

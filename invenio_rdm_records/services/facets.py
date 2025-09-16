@@ -25,6 +25,13 @@ from invenio_vocabularies.services.facets import VocabularyLabels
 from ..records.dumpers.combined_subjects import SPLITCHAR
 from ..records.systemfields.access.field.record import AccessStatusEnum
 
+has_reviews = TermsFacet(
+    field="notify.has_reviews",
+    label=_("Has reviews"),
+    value_labels={"true": _("Yes"), "false": _("No")},
+)
+
+
 access_status = TermsFacet(
     field="access.status",
     label=_("Access status"),

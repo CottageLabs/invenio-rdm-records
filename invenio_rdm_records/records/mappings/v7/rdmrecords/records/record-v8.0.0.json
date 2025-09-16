@@ -1544,10 +1544,10 @@
       "endorsements": {
         "type": "nested",
         "properties": {
-          "reviewer_id": {
+          "actor_id": {
             "type": "long"
           },
-          "reviewer_name": {
+          "actor_name": {
             "type": "text",
             "fields": {
               "keyword": {

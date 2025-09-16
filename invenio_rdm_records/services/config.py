@@ -795,7 +795,7 @@ class RDMRecordServiceConfig(RecordServiceConfig, ConfiguratorMixin):
         ),
         # Endorsements Requests
         "endorsement_request": RecordEndpointLink("endorsement_request.send", when=is_record_owner),
-        "endorsement_request_reviewers": RecordEndpointLink("endorsement_request.list_reviewers", when=is_record_owner)
+        "endorsement_request_actors": RecordEndpointLink("endorsement_request.list_actors", when=is_record_owner)
     }
 
     nested_links_item = [

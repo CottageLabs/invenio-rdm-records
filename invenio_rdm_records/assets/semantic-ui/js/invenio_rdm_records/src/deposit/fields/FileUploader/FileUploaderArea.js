@@ -16,7 +16,7 @@ import React, { Component, useState } from "react";
 import Dropzone from "react-dropzone";
 import {
   Button,
-  Checkbox,
+  Radio,
   Grid,
   Header,
   Icon,
@@ -33,7 +33,9 @@ const FileTableHeader = ({ filesLocked }) => (
       <Table.HeaderCell>
         {i18next.t("Preview")}{" "}
         <Popup
-          content={i18next.t("Set the default preview")}
+          content={i18next.t(
+            "Choose which file to preview on the published record landing page"
+          )}
           trigger={<Icon fitted name="help circle" size="small" />}
         />
       </Table.HeaderCell>
@@ -89,9 +91,7 @@ const FileTableRow = ({
   return (
     <Table.Row key={file.name}>
       <Table.Cell data-label={i18next.t("Default preview")} width={2}>
-        {/* TODO: Investigate if react-deposit-forms optimized Checkbox field
-                  would be more performant */}
-        <Checkbox
+        <Radio
           checked={isDefaultPreview}
           onChange={() => setDefaultPreview(isDefaultPreview ? "" : file.name)}
         />
@@ -100,7 +100,10 @@ const FileTableRow = ({
         <div>
           {fileError && (
             <>
-              <FeedbackLabel errorMessage={fileError} pointing="below" />
+              <FeedbackLabel
+                fieldPath={"files.entries." + file.name}
+                pointing="below"
+              />
               <br />
             </>
           )}
@@ -117,7 +120,7 @@ const FileTableRow = ({
             </a>
           )}
           <br />
-          {file.checksum && (
+          {(file.checksum && (
             <div className="ui text-muted">
               <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
               <Popup
@@ -128,11 +131,19 @@ const FileTableRow = ({
                 position="top center"
               />
             </div>
+          )) || (
+            <div className="ui text-muted">
+              <span style={{ fontSize: "10px" }}>
+                {i18next.t("Checksum not yet calculated.")}
+              </span>{" "}
+            </div>
           )}
         </div>
       </Table.Cell>
       <Table.Cell data-label={i18next.t("Size")} width={2}>
-        {file.size ? humanReadableBytes(file.size, decimalSizeDisplay) : ""}
+        {file.size
+          ? humanReadableBytes(file.size, decimalSizeDisplay)
+          : i18next.t("N/A")}
       </Table.Cell>
       {!filesLocked && (
         <Table.Cell
@@ -268,7 +279,12 @@ FileUploadBox.defaultProps = {
   hasError: false,
 };
 
-const FilesListTable = ({ filesLocked, filesList, deleteFile, decimalSizeDisplay }) => {
+export const FilesListTable = ({
+  filesLocked,
+  filesList,
+  deleteFile,
+  decimalSizeDisplay,
+}) => {
   const { errors, setFieldValue, values: formikDraft } = useFormikContext();
   const defaultPreview = _get(formikDraft, "files.default_preview", "");
   return (

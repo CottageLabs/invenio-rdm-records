@@ -11,16 +11,20 @@ import PropTypes from "prop-types";
 import { getIn, FieldArray } from "formik";
 import { Button, Form, List, Icon } from "semantic-ui-react";
 import _get from "lodash/get";
-import { FeedbackLabel, FieldLabel } from "react-invenio-forms";
-
+import {
+  FeedbackLabel,
+  FieldLabel,
+  mandatoryFieldCommonProps,
+  showHideOverridable,
+} from "react-invenio-forms";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
-
 import { CreatibutorsModal } from "./CreatibutorsModal";
 import { CreatibutorsFieldItem } from "./CreatibutorsFieldItem";
 import { CREATIBUTOR_TYPE } from "./type";
 import { sortOptions } from "../../utils";
 import { i18next } from "@translations/invenio_rdm_records/i18next";
+import Overridable from "react-overridable";
 
 const creatibutorNameDisplay = (value) => {
   const creatibutorType = _get(value, "person_or_org.type", CREATIBUTOR_TYPE.PERSON);
@@ -63,6 +67,9 @@ class CreatibutorsFieldForm extends Component {
       modal,
       autocompleteNames,
       addButtonLabel,
+      serializeSuggestions,
+      serializeCreatibutor,
+      deserializeCreatibutor,
     } = this.props;
 
     const creatibutorsList = getIn(values, fieldPath, []);
@@ -94,65 +101,78 @@ class CreatibutorsFieldForm extends Component {
     }
 
     return (
-      <DndProvider backend={HTML5Backend}>
-        <Form.Field required={schema === "creators"} className={className}>
-          <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
-          <List>
-            {creatibutorsList.map((value, index) => {
-              const key = `${fieldPath}.${index}`;
-              const displayName = creatibutorNameDisplay(value);
+      <Overridable
+        id="InvenioRdmRecords.DepositForm.CreatibutorsField.Container"
+        labelIcon={labelIcon}
+        label={label}
+        roleOptions={roleOptions}
+        schema={schema}
+        addLabel={modal.addLabel}
+        editLabel={modal.editLabel}
+        addButtonLabel={addButtonLabel}
+        className={className}
+      >
+        <DndProvider backend={HTML5Backend}>
+          <Form.Field required={schema === "creators"} className={className}>
+            <FieldLabel htmlFor={fieldPath} icon={labelIcon} label={label} />
+            <List>
+              {creatibutorsList.map((value, index) => {
+                const key = `${fieldPath}.${index}`;
+                const displayName = creatibutorNameDisplay(value);
 
-              return (
-                <CreatibutorsFieldItem
-                  key={key}
-                  creatibutorError={
-                    creatibutorsError &&
-                    typeof creatibutorsError !== "string" &&
-                    creatibutorsError[index]
-                  }
-                  {...{
-                    displayName,
-                    index,
-                    roleOptions,
-                    schema,
-                    compKey: key,
-                    initialCreatibutor: value,
-                    removeCreatibutor: formikArrayRemove,
-                    replaceCreatibutor: formikArrayReplace,
-                    moveCreatibutor: formikArrayMove,
-                    addLabel: modal.addLabel,
-                    editLabel: modal.editLabel,
-                    autocompleteNames: autocompleteNames,
-                  }}
-                />
-              );
-            })}
-          </List>
-          <CreatibutorsModal
-            onCreatibutorChange={this.handleOnContributorChange}
-            action="add"
-            addLabel={modal.addLabel}
-            editLabel={modal.editLabel}
-            roleOptions={sortOptions(roleOptions)}
-            schema={schema}
-            autocompleteNames={autocompleteNames}
-            trigger={
-              <Button type="button" icon labelPosition="left" className={className}>
-                <Icon name="add" />
-                {addButtonLabel}
-              </Button>
-            }
-          />
-          {generalCreatibutorsError && (
-            <FeedbackLabel errorMessage={generalCreatibutorsError} />
-          )}
-        </Form.Field>
-      </DndProvider>
+                return (
+                  <CreatibutorsFieldItem
+                    key={key}
+                    creatibutorError={
+                      creatibutorsError &&
+                      typeof creatibutorsError !== "string" &&
+                      creatibutorsError[index]
+                    }
+                    {...{
+                      displayName,
+                      index,
+                      roleOptions,
+                      schema,
+                      compKey: key,
+                      initialCreatibutor: value,
+                      removeCreatibutor: formikArrayRemove,
+                      replaceCreatibutor: formikArrayReplace,
+                      moveCreatibutor: formikArrayMove,
+                      addLabel: modal.addLabel,
+                      editLabel: modal.editLabel,
+                      autocompleteNames: autocompleteNames,
+                      serializeSuggestions: serializeSuggestions,
+                      serializeCreatibutor: serializeCreatibutor,
+                      deserializeCreatibutor: deserializeCreatibutor,
+                    }}
+                  />
+                );
+              })}
+            </List>
+            <CreatibutorsModal
+              onCreatibutorChange={this.handleOnContributorChange}
+              action="add"
+              addLabel={modal.addLabel}
+              editLabel={modal.editLabel}
+              roleOptions={sortOptions(roleOptions)}
+              schema={schema}
+              autocompleteNames={autocompleteNames}
+              trigger={
+                <Button type="button" icon labelPosition="left" className={className}>
+                  <Icon name="add" />
+                  {addButtonLabel}
+                </Button>
+              }
+            />
+            {generalCreatibutorsError && <FeedbackLabel fieldPath={fieldPath} />}
+          </Form.Field>
+        </DndProvider>
+      </Overridable>
     );
   }
 }
 
-export class CreatibutorsField extends Component {
+export class CreatibutorsFieldComponent extends Component {
   render() {
     const { fieldPath } = this.props;
 
@@ -168,7 +188,6 @@ export class CreatibutorsField extends Component {
 }
 
 CreatibutorsFieldForm.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
   addButtonLabel: PropTypes.string,
   modal: PropTypes.shape({
     addLabel: PropTypes.string.isRequired,
@@ -176,8 +195,6 @@ CreatibutorsFieldForm.propTypes = {
   }),
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
   autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   roleOptions: PropTypes.array.isRequired,
   form: PropTypes.object.isRequired,
   remove: PropTypes.func.isRequired,
@@ -185,6 +202,10 @@ CreatibutorsFieldForm.propTypes = {
   move: PropTypes.func.isRequired,
   push: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
+  ...mandatoryFieldCommonProps,
 };
 
 CreatibutorsFieldForm.defaultProps = {
@@ -196,10 +217,12 @@ CreatibutorsFieldForm.defaultProps = {
     editLabel: i18next.t("Edit creator"),
   },
   addButtonLabel: i18next.t("Add creator"),
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };
 
-CreatibutorsField.propTypes = {
-  fieldPath: PropTypes.string.isRequired,
+CreatibutorsFieldComponent.propTypes = {
   addButtonLabel: PropTypes.string,
   modal: PropTypes.shape({
     addLabel: PropTypes.string.isRequired,
@@ -207,12 +230,14 @@ CreatibutorsField.propTypes = {
   }),
   schema: PropTypes.oneOf(["creators", "contributors"]).isRequired,
   autocompleteNames: PropTypes.oneOf(["search", "search_only", "off"]),
-  label: PropTypes.string,
-  labelIcon: PropTypes.string,
   roleOptions: PropTypes.array,
+  serializeSuggestions: PropTypes.func,
+  serializeCreatibutor: PropTypes.func,
+  deserializeCreatibutor: PropTypes.func,
+  ...mandatoryFieldCommonProps,
 };
 
-CreatibutorsField.defaultProps = {
+CreatibutorsFieldComponent.defaultProps = {
   autocompleteNames: "search",
   label: undefined,
   labelIcon: undefined,
@@ -222,4 +247,12 @@ CreatibutorsField.defaultProps = {
     editLabel: i18next.t("Edit creator"),
   },
   addButtonLabel: i18next.t("Add creator"),
+  serializeSuggestions: undefined,
+  serializeCreatibutor: undefined,
+  deserializeCreatibutor: undefined,
 };
+
+export const CreatibutorsField = showHideOverridable(
+  "InvenioRdmRecords.DepositForm.CreatibutorsField",
+  CreatibutorsFieldComponent
+);

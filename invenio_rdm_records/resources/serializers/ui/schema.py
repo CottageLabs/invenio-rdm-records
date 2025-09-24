@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
-# Copyright (C) 2021-2023 Graz University of Technology.
+# Copyright (C) 2021-2025 Graz University of Technology.
 # Copyright (C) 2022-2023 TU Wien.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
@@ -49,8 +49,13 @@ FormatEDTF = partial(FormatEDTF_, locale=get_locale)
 FormatDate = partial(FormatDate_, locale=get_locale)
 
 
-def make_affiliation_index(attr, obj, dummy_ctx):
-    """Serializes creators/contributors for easier UI consumption."""
+def make_affiliation_index(attr, obj, *args):
+    """Serializes creators/contributors for easier UI consumption.
+
+    args takes 'object_key' and 'object_schema_cls'. it seems useless since it
+    is not used, but the tests would fail. it could be that this is because of
+    changes to fix RemovedInMarshmallow4Warning
+    """
     # Copy so we don't modify in place the existing dict.
     creators = deepcopy(obj.get("metadata", {}).get(attr))
     if not creators:
@@ -217,7 +222,7 @@ class MeetingSchema(Schema):
     url = SanitizedUnicode()
 
 
-def compute_publishing_information(obj, dummyctx):
+def compute_publishing_information(obj):
     """Computes 'publishing information' string from custom fields."""
 
     def _format_journal(journal, publication_date):
@@ -290,19 +295,20 @@ def compute_publishing_information(obj, dummyctx):
         """Formats a thesis entry into a string based on its attributes."""
         if not isinstance(thesis, dict):
             return thesis
-
+        university = thesis.get("university")
         department = thesis.get("department")
-        department = f" ({department})" if department else ""
-        date_submitted = thesis.get("date_submitted")
-        date_defended = thesis.get("date_defended")
-        submitted = f"{_('Submitted: ')}{date_submitted}" if date_submitted else ""
-        defended = f"{_('Defended: ')}{date_defended}" if date_defended else ""
-        return (
-            f"{thesis.get('university')} {department}, {thesis.get('type')}, "
-            f"{submitted}, {defended}"
-        )
+        if university and department:
+            university = f"{university} ({department})"
+        elif university is None:
+            university = department
 
-        return ", ".join(filter(None, formatted))
+        date_submitted = thesis.get("date_submitted")
+        submitted = f"{_('Submitted: ')}{date_submitted}" if date_submitted else None
+        date_defended = thesis.get("date_defended")
+        defended = f"{_('Defended: ')}{date_defended}" if date_defended else None
+
+        fields = [university, thesis.get("type"), submitted, defended]
+        return ", ".join(filter(None, fields))
 
     attr = "custom_fields"
     field = obj.get(attr, {})

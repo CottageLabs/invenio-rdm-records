@@ -12,6 +12,233 @@
 Changes
 =======
 
+Version v21.0.0 (released 2025-09-24)
+
+- installation: bump invenio-communities and invenio-checks
+- feat(deletion-request): different checklist for immediate and request
+- feat(record-deletion): add notifications
+- fix(record-deletion): tombstone should have accepter's ID
+- feat(deletion-request): add tags for valid removal reasons
+- feat(schema): allow `removed_by` to be passed to tombstone schema
+    * Allows loading the field in the schema.
+    * If not passed, defaults to the `identity.id` of the deletion action.
+- feat(schema): add `deletion_policy` to record tombstone
+- feat: add support to request deletion of a record
+- chore(js-tests): upgrade react-overridable major version
+- fix(CreatibutorsModal): get identifier scheme from recent suggestions
+- fix(datacite test link): update Datacite test DOI link
+- fix: invalid datacite test mode link
+
+Version v20.2.0 (released 2025-09-16)
+
+- **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
+    - Added Overridable for many components that did not already have it. This was done following the existing naming convention. New Overridables do not represent any breaking or behavior changes.
+    - Renamed a number of existing Overridable IDs for better compliance with existing naming conventions. This is the full list:
+        - `ReactInvenioDeposit.FileUploader.layout` -> `InvenioRdmRecords.DepositForm.FileUploader.Container`
+        - `ReactInvenioDeposit.FileUploader.ImportButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.ImportButton`
+        - `ReactInvenioDeposit.FileUploader.FileUploaderArea.container` -> `InvenioRdmRecords.DepositForm.FileUploader.UploadArea`
+        - `ReactInvenioDeposit.FileUploader.NewVersionButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.NewVersionButton`
+        - `ReactInvenioDeposit.FileUploader.Modal.container` -> `InvenioRdmRecords.DepositForm.FileUploader.Modal`
+        - `ReactInvenioDeposit.FileUploaderToolbar.layout` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.Container`
+        - `ReactInvenioDeposit.FileUploaderToolbar.MetadataOnlyToggle.container` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle`
+        - `InvenioRDMRecords.CreatibutorsModal.RoleSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.FullNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField`
+        - `InvenioRdmRecords.DatesField.AddDateArrayField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.Container`
+        - `InvenioRdmRecords.DatesField.DescriptionTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DescriptionField`
+        - `InvenioRdmRecords.DatesField.DateTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DateField`
+        - `InvenioRdmRecords.DatesField.TypeSelectField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.TypeField`
+        - `InvenioRdmRecords.DatesField.RemoveFormField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.RemoveButton`
+    - No existing overridables have been removed completely to avoid breaking current implementations in an unresolvable way.
+
+Version v20.1.0 (released 2025-09-05)
+
+- setup: bump major versions of invenio-jobs and invenio-vocabularies
+- fix: improve rendering of ErrorMessage in deposit form
+
+Version v20.0.3 (released 2025-09-03)
+
+- fix(deposit-form): correct wrong propType for optionalDOItransitions
+- fix(deposit-form): on delete draft discard all changed pids
+    * discard all draft pids if there is no published record (i.e. new version or new draft)
+    * discard all draft pids that are not in the published record
+
+Version v20.0.2 (released 2025-09-01)
+
+- fix(optional-doi): show correctly showed value on form initialization
+    * uses published record doi to check if the managed DOI can be unreserved.
+    * `shouldCheckForExplicitDOIReservation` condition is evaluated against pids.doi because
+      before it was taking into account only the pids object and there more pids could be present e.g. oai
+- fix(iiif): add error handler for `MultimediaImageNotFound`
+
+Version v20.0.1 (released 2025-08-27)
+
+- fix: use config variable instead of redefining
+- services: create RDMCommunityRecordSearchOptions
+- deposit-form: add fallback message if checksum is not yet available
+    * this is relevant for the multipart file upload with local file
+      storage, where the checksum gets calculated in a background task after
+      finalizing the upload
+- fix(schemaorg): chase award schema relaxation from Invenio-Vocabularies
+- fix(oaipmh): properly change output format
+    * `URLSearchParams` does not parse URLs,
+      https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#no_url_parsing,
+      preventing the `metadataPrefix` from changing when a new value is
+      selected on the dropdown.
+- UI: use X for discard instead of trash icon
+- UI: add icon to delete button
+
+Version v20.0.0 (released 2025-08-01)
+
+- feat: implement request reviewers functionality
+  - Add RequestReviewers generator with configuration support
+  - Refactor request.reviewer to request.reviewers for consistency
+  - Remove deprecated approve action
+  - Add comprehensive tests for reviewer assignment
+  - Include configuration validation for reviewer settings
+- setup: bump major versions of invenio-communities and invenio-checks
+  - needed to isolate the new request reviewers functionality
+
+Version v19.5.3 (released 2025-07-31)
+
+- optional-DOI: validation workflow improvements
+  - fixes issue where optional DOI validation was not properly handled during the submit for review process
+  - adds proper optional DOI validation when submitting records for review
+- components: adds informative error message when attempting to create duplicate review requests
+
+Version v19.5.2 (released 2025-07-30)
+
+- fix(serializers): Strip none and trailing whitespace for thesis
+
+Version v19.5.1 (released 2025-07-21)
+
+- fix: cross-origin-file-uploads
+
+Version v19.5.0 (released 2025-07-17)
+
+- meeting cf: fix typo in the mapping
+- i18n: pulled translations
+- serializers: bibtex: Prefix all_version with doi
+- tests: serializers: Add test for bibtex all versions
+- serializers: bibtex: Add all versions export support
+
+Version v19.4.2 (released 2025-07-16)
+
+- PublishButton: Separate PublishModal and add checkbox easily via params
+- assets: PublishModal: Ensure unique fieldPath and id for checkboxes
+- Fix: installation failed due to type error
+
+Version v19.4.1 (released 2025-07-14)
+
+- doi: handle case with no configured parent dois
+
+Version v19.4.0 (released 2025-07-10)
+
+- chores: replacing importlib_metadata with importlib.metadata
+- i18n: run js extract msgs
+- i18n: replace Trans for EmbargoAccess
+- i18n: replace Trans with i18next.t in VersionField
+- i18n: replace Trans with i18next.t in DeleteModal
+- i18n: replace Trans in access msgs
+- i18n: fix warning msg not showing
+- i18n: cs vocabulary translations (#2093)
+- i18n:push translations
+- i18n: run js compile catalog
+- i18n: run js extract msgs
+- i18n: refactor compile catalog
+- i18n: force pull py and js translations
+- i18n: extract python msgs
+- fix: conflicting s3 part size for 1M-5M files
+- ext: Add deprecation warning for publishModalExtraContent
+- assets: PublishButton: Rename overridable containers
+- assets: PublishButton: Make submit and publish utility overridable
+- deposit: change creatributor and license item button order
+- tests: have fixture test ignore load order
+- resource: fix remove last community error
+- fix: added overridable blocks and passing serializing functions as props
+
+Version v19.3.0 (released 2025-07-02)
+
+- fix: disabled remote and fetch transport in permissions
+- fix: RemovedInMarshmallow4Warning
+- fix: ChangedInMarshmallow4Warning
+- contrib: specify proceedings in imprint title label
+- fix: pkg_resources DeprecationWarning
+- tests: add tests for setting record/user quotas
+- quotas: set the record's file quota in a service component
+- quotas: add extra info about the user_id column in record quotas
+- quotas: remove unique constraint for the user_id in record quotas
+- deposit-ui: implement uppy uploader field
+- oaiserver/services: simplify search filtering
+- fix: SADeprecationWarning
+- i18n: localize embargoed date
+- records-api: add Data Package serializer
+
+Version v19.2.0 (released 2025-06-13)
+
+- checks: integrate service component and community requests
+
+Version v19.1.0 (released 2025-06-12)
+
+- form: display errors on draft load
+- deposit: updated fieldpath for feedback label
+- serializers/datacite: configurable dumping of access right (#2047)
+    * serializers/datacite: configurable dumping of access right
+    * Adds a new `RDM_DATACITE_DUMP_ACCESS_RIGHTS` config variable to
+      control if the access right level is included in the DataCite
+      serialization. The value is based on the vocabulary documented at
+      <https://wiki.surfnet.nl/spaces/standards/pages/11055603/info-eu-repo#infoeurepo-AccessRights>
+    * confix: rename to `RDM_DATACITE_DUMP_OPENAIRE_ACCESS_RIGHTS`
+- licenses: add creative commons public domain mark from spdx
+- serializers: add publication-section rdm type (book section) to bibtex serialization
+- localizing dates based on application selected locale
+- contrib-meeting: add missing `url` field to deposit form
+
+Version v19.0.1 (released 2025-06-10)
+
+- file uploader: change from checkbox to radio
+- file uploader: improve exceeded limit message
+- tests: update error to reflect records-resources file permission order change
+- creatibutors: adapt to new feedback label interface
+- creatibutors: fix nested errors & feedback display
+
+Version v19.0.0 (released 2025-06-03)
+
+- setup: version bump on dependent packages
+- fix: added permissions for getting/setting transfer metadata
+  * Added extra permissions to get/update transfer metadata. These permissions
+  are not used by REST API, they are used in background tasks, at this
+  moment for fetch transfer (not enabled by default and not supported in UI)
+- test: fixed test - file key is now required
+- permissions: multipart upload with local fs storage
+- Implementation of RFC 0072 - Pluggable transfer types
+  * IfFileIsLocal is not used anymore as it was handling just one type of transport
+  * Switched to IfTransferType permission generators
+- installation: remove collections dependency
+
+Version v18.14.0 (released 2025-06-02)
+
+- config: make community request type classes customizable
+    * Allows to customize community submissions and inclusion request type
+      classes via the ``RDM_COMMUNITY_SUBMISSION_REQUEST_CLS`` and
+      ``RDM_COMMUNITY_INCLUSION_REQUEST_CLS`` config variables.
+
+Version v18.13.0 (released 2025-06-02)
+
+- Move collections implementaiton to Invenio-Collections
+
+Version v18.12.0 (released 2025-05-23)
+
+- resources: expose get current revision of record
+- deposit: fix global server errors in frontend
+- feedback-ui: Add specific ID to disconnected feedback form
+
 Version v18.11.0 (released 2025-05-16)
 
 - deposit-ui: fix upload files error state

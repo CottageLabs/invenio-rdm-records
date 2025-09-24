@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2021-2024 CERN.
+# Copyright (C) 2021-2025 CERN.
 #
 # Invenio-RDM-Records is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -775,7 +775,7 @@ def test_review_cancel_notification(
         assert "/me/requests/{}".format(req["id"]) in sent_mail.html
         assert (
             uploader.email not in sent_mail.recipients
-            and not uploader.email in sent_mail_2.recipients
+            and uploader.email not in sent_mail_2.recipients
         )
         assert community_owner.email in sent_mail.recipients
         assert curator.email in sent_mail_2.recipients
@@ -922,7 +922,7 @@ def test_share_draft_gives_access_to_review_request(
     review = requests_service.read(
         verified_user.identity, draft.parent.review.id
     ).to_dict()
-    assert review["id"] == draft.parent.review.id
+    assert review["id"] == str(draft.parent.review.id)
 
     # Edit permission should give access to the submission request
     payload = {"permission": "edit"}
@@ -936,7 +936,7 @@ def test_share_draft_gives_access_to_review_request(
     review = requests_service.read(
         verified_user.identity, draft.parent.review.id
     ).to_dict()
-    assert review["id"] == draft.parent.review.id
+    assert review["id"] == str(draft.parent.review.id)
 
     # Manage permission should give access to the submission request
     payload = {"permission": "manage"}
@@ -950,7 +950,7 @@ def test_share_draft_gives_access_to_review_request(
     review = requests_service.read(
         verified_user.identity, draft.parent.review.id
     ).to_dict()
-    assert review["id"] == draft.parent.review.id
+    assert review["id"] == str(draft.parent.review.id)
 
 
 def test_share_draft_shows_up_in_shared_user_uploads(

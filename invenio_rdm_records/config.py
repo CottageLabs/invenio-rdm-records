@@ -116,6 +116,10 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
 }
 """These are used for references, main, alternate and related identifiers."""
 
+
+RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES = RDM_RECORDS_IDENTIFIERS_SCHEMES
+"""This variable is used to separate related identifiers."""
+
 RDM_RECORDS_LOCATION_SCHEMES = {
     "wikidata": {"label": _("Wikidata"), "validator": always_valid},
     "geonames": {"label": _("GeoNames"), "validator": always_valid},
@@ -326,6 +330,14 @@ RDM_SORT_OPTIONS = {
     ),
     "mostdownloaded": dict(
         title=_("Most downloaded"), fields=["-stats.all_versions.unique_downloads"]
+    ),
+    "newestactivity": dict(
+        title=_("Newest activity"),
+        fields=["-last_activity_at"],
+    ),
+    "oldestactivity": dict(
+        title=_("Oldest activity"),
+        fields=["last_activity_at"],
     ),
 }
 """Definitions of available record sort options.

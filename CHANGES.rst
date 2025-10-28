@@ -12,6 +12,44 @@
 Changes
 =======
 
+Version v22.1.0 (released 2025-10-27)
+
+- feat(form): add support for help text to creatibutors button in the deposit form
+
+Version v22.0.1 (released 2025-10-27)
+
+- fix(contrib): meeting field ID allowed schemas source
+- fix(deposit): duplicate uploads from resetting progress
+
+Version v22.0.0 (released 2025-10-21)
+
+- feat(resource_types)!: Remove publication-thesis
+    * BREAKING CHANGE: resource_type with id publication-dissertation will now be used instead as it is correctly mapped to the "Dissertation" type in DataCite
+
+Version v21.3.0 (released 2025-10-20)
+
+- fix(deposit-ui): disable drag-n-drop files when files are locked
+- fix(deposit-ui): re-add code removed in 9e8f553
+- feat(schema): added related_identifiers variable
+- fix(setup): temporarily tighten commonmeta-py pin
+    * this avoids getting a version of the dependency with breaking changes
+- fix(oai-pmh): handle broader permission denied errors
+    * previously, the `GetRecord` verb targeting a restricted record would
+      result in a HTTP 500 response due to an unhandled error
+    * the `getrecord_fetcher()` function only handled
+      `PermissionDeniedError` exceptions but not
+      `RecordPermissionDeniedError`, which are the ones raised by services
+    * since both of them are subclasses of `PermissionDenied`, we simply
+      handle that instead
+
+Version v21.2.0 (released 2025-10-01)
+
+- feat(config): add last activity sort option
+
+Version v21.1.0 (released 2025-09-24)
+
+- installation: upgrade invenio-jobs
+
 Version v21.0.0 (released 2025-09-24)
 
 - installation: bump invenio-communities and invenio-checks

@@ -12,10 +12,136 @@
 Changes
 =======
 
-Version v19.5.4 (released 2025-08-20)
+Version v22.1.0 (released 2025-10-27)
 
+- feat(form): add support for help text to creatibutors button in the deposit form
+
+Version v22.0.1 (released 2025-10-27)
+
+- fix(contrib): meeting field ID allowed schemas source
+- fix(deposit): duplicate uploads from resetting progress
+
+Version v22.0.0 (released 2025-10-21)
+
+- feat(resource_types)!: Remove publication-thesis
+    * BREAKING CHANGE: resource_type with id publication-dissertation will now be used instead as it is correctly mapped to the "Dissertation" type in DataCite
+
+Version v21.3.0 (released 2025-10-20)
+
+- fix(deposit-ui): disable drag-n-drop files when files are locked
+- fix(deposit-ui): re-add code removed in 9e8f553
+- feat(schema): added related_identifiers variable
+- fix(setup): temporarily tighten commonmeta-py pin
+    * this avoids getting a version of the dependency with breaking changes
+- fix(oai-pmh): handle broader permission denied errors
+    * previously, the `GetRecord` verb targeting a restricted record would
+      result in a HTTP 500 response due to an unhandled error
+    * the `getrecord_fetcher()` function only handled
+      `PermissionDeniedError` exceptions but not
+      `RecordPermissionDeniedError`, which are the ones raised by services
+    * since both of them are subclasses of `PermissionDenied`, we simply
+      handle that instead
+
+Version v21.2.0 (released 2025-10-01)
+
+- feat(config): add last activity sort option
+
+Version v21.1.0 (released 2025-09-24)
+
+- installation: upgrade invenio-jobs
+
+Version v21.0.0 (released 2025-09-24)
+
+- installation: bump invenio-communities and invenio-checks
+- feat(deletion-request): different checklist for immediate and request
+- feat(record-deletion): add notifications
+- fix(record-deletion): tombstone should have accepter's ID
+- feat(deletion-request): add tags for valid removal reasons
+- feat(schema): allow `removed_by` to be passed to tombstone schema
+    * Allows loading the field in the schema.
+    * If not passed, defaults to the `identity.id` of the deletion action.
+- feat(schema): add `deletion_policy` to record tombstone
+- feat: add support to request deletion of a record
+- chore(js-tests): upgrade react-overridable major version
+- fix(CreatibutorsModal): get identifier scheme from recent suggestions
+- fix(datacite test link): update Datacite test DOI link
+- fix: invalid datacite test mode link
+
+Version v20.2.0 (released 2025-09-16)
+
+- **feat(deposit-form)!: added `react-overridable` support more consistently across all deposit form fields**
+    - Added Overridable for many components that did not already have it. This was done following the existing naming convention. New Overridables do not represent any breaking or behavior changes.
+    - Renamed a number of existing Overridable IDs for better compliance with existing naming conventions. This is the full list:
+        - `ReactInvenioDeposit.FileUploader.layout` -> `InvenioRdmRecords.DepositForm.FileUploader.Container`
+        - `ReactInvenioDeposit.FileUploader.ImportButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.ImportButton`
+        - `ReactInvenioDeposit.FileUploader.FileUploaderArea.container` -> `InvenioRdmRecords.DepositForm.FileUploader.UploadArea`
+        - `ReactInvenioDeposit.FileUploader.NewVersionButton.container` -> `InvenioRdmRecords.DepositForm.FileUploader.NewVersionButton`
+        - `ReactInvenioDeposit.FileUploader.Modal.container` -> `InvenioRdmRecords.DepositForm.FileUploader.Modal`
+        - `ReactInvenioDeposit.FileUploaderToolbar.layout` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.Container`
+        - `ReactInvenioDeposit.FileUploaderToolbar.MetadataOnlyToggle.container` -> `InvenioRdmRecords.DepositForm.FileUploaderToolbar.MetadataOnlyToggle`
+        - `InvenioRDMRecords.CreatibutorsModal.RoleSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.RoleSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.FullNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.FullNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.PersonAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.PersonAffiliationsField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationRemoteSelectField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationRemoteSelectField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationNameField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationNameField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationIdentifiersField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationIdentifiersField`
+        - `InvenioRDMRecords.CreatibutorsModal.OrganizationAffiliationsField.container` -> `InvenioRdmRecords.DepositForm.CreatibutorsModal.OrganizationAffiliationsField`
+        - `InvenioRdmRecords.DatesField.AddDateArrayField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.Container`
+        - `InvenioRdmRecords.DatesField.DescriptionTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DescriptionField`
+        - `InvenioRdmRecords.DatesField.DateTextField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.DateField`
+        - `InvenioRdmRecords.DatesField.TypeSelectField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.TypeField`
+        - `InvenioRdmRecords.DatesField.RemoveFormField.Container` -> `InvenioRdmRecords.DepositForm.DatesField.RemoveButton`
+    - No existing overridables have been removed completely to avoid breaking current implementations in an unresolvable way.
+
+Version v20.1.0 (released 2025-09-05)
+
+- setup: bump major versions of invenio-jobs and invenio-vocabularies
+- fix: improve rendering of ErrorMessage in deposit form
+
+Version v20.0.3 (released 2025-09-03)
+
+- fix(deposit-form): correct wrong propType for optionalDOItransitions
+- fix(deposit-form): on delete draft discard all changed pids
+    * discard all draft pids if there is no published record (i.e. new version or new draft)
+    * discard all draft pids that are not in the published record
+
+Version v20.0.2 (released 2025-09-01)
+
+- fix(optional-doi): show correctly showed value on form initialization
+    * uses published record doi to check if the managed DOI can be unreserved.
+    * `shouldCheckForExplicitDOIReservation` condition is evaluated against pids.doi because
+      before it was taking into account only the pids object and there more pids could be present e.g. oai
+- fix(iiif): add error handler for `MultimediaImageNotFound`
+
+Version v20.0.1 (released 2025-08-27)
+
+- fix: use config variable instead of redefining
+- services: create RDMCommunityRecordSearchOptions
+- deposit-form: add fallback message if checksum is not yet available
+    * this is relevant for the multipart file upload with local file
+      storage, where the checksum gets calculated in a background task after
+      finalizing the upload
 - fix(schemaorg): chase award schema relaxation from Invenio-Vocabularies
 - fix(oaipmh): properly change output format
+    * `URLSearchParams` does not parse URLs,
+      https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#no_url_parsing,
+      preventing the `metadataPrefix` from changing when a new value is
+      selected on the dropdown.
+- UI: use X for discard instead of trash icon
+- UI: add icon to delete button
+
+Version v20.0.0 (released 2025-08-01)
+
+- feat: implement request reviewers functionality
+  - Add RequestReviewers generator with configuration support
+  - Refactor request.reviewer to request.reviewers for consistency
+  - Remove deprecated approve action
+  - Add comprehensive tests for reviewer assignment
+  - Include configuration validation for reviewer settings
+- setup: bump major versions of invenio-communities and invenio-checks
+  - needed to isolate the new request reviewers functionality
 
 Version v19.5.3 (released 2025-07-31)
 

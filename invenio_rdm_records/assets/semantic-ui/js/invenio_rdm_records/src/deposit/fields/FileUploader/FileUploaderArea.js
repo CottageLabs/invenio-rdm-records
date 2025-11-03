@@ -120,7 +120,7 @@ const FileTableRow = ({
             </a>
           )}
           <br />
-          {file.checksum && (
+          {(file.checksum && (
             <div className="ui text-muted">
               <span style={{ fontSize: "10px" }}>{file.checksum}</span>{" "}
               <Popup
@@ -130,6 +130,12 @@ const FileTableRow = ({
                 trigger={<Icon fitted name="help circle" size="small" />}
                 position="top center"
               />
+            </div>
+          )) || (
+            <div className="ui text-muted">
+              <span style={{ fontSize: "10px" }}>
+                {i18next.t("Checksum not yet calculated.")}
+              </span>{" "}
             </div>
           )}
         </div>
@@ -322,9 +328,9 @@ FilesListTable.defaultProps = {
 
 export class FileUploaderArea extends Component {
   render() {
-    const { filesEnabled, dropzoneParams, filesList } = this.props;
+    const { filesEnabled, dropzoneParams, filesList, filesLocked } = this.props;
     return filesEnabled ? (
-      <Dropzone {...dropzoneParams}>
+      <Dropzone {...dropzoneParams} disabled={filesLocked}>
         {({ getRootProps, getInputProps, open: openFileDialog }) => (
           <Grid.Column width={16}>
             <span {...getRootProps()}>

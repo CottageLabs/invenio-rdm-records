@@ -31,6 +31,11 @@ from .requests.community_submission import CommunitySubmission
 from .resources.serializers import DataCite43JSONSerializer
 from .services import facets
 from .services.config import lock_edit_published_files
+from .services.deletion_policy import (
+    GracePeriodPolicy,
+    RDMRecordDeletionPolicy,
+    RequestDeletionPolicy,
+)
 from .services.permissions import RDMRecordPermissionPolicy
 from .services.pids import providers
 from .services.queryparser import word_internal_notes
@@ -111,6 +116,10 @@ RDM_RECORDS_IDENTIFIERS_SCHEMES = {
 }
 """These are used for references, main, alternate and related identifiers."""
 
+
+RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES = RDM_RECORDS_IDENTIFIERS_SCHEMES
+"""This variable is used to separate related identifiers."""
+
 RDM_RECORDS_LOCATION_SCHEMES = {
     "wikidata": {"label": _("Wikidata"), "validator": always_valid},
     "geonames": {"label": _("GeoNames"), "validator": always_valid},
@@ -146,6 +155,64 @@ RDM_DEFAULT_FILES_ENABLED = True
 #
 RDM_ALLOW_RESTRICTED_RECORDS = True
 """Allow users to set restricted/private records."""
+
+#
+# Record deletion by users
+#
+RDM_RECORD_DELETION_POLICY = RDMRecordDeletionPolicy
+"""Policy class which evaluates whether a record can be deleted by a user."""
+
+RDM_IMMEDIATE_RECORD_DELETION_ENABLED = False
+"""Allow users to immediately delete records."""
+
+RDM_IMMEDIATE_RECORD_DELETION_POLICIES = [GracePeriodPolicy()]
+"""List of policies for immediate record deletion.
+
+Policies are executed in order and the first one to return True is used
+as the policy for the record. As such, policies should be specified from most
+to least specific.
+
+To update a policy, create a duplicate of it and add a check on creation date to
+both. When your policy comes into effect on a date in the future, and this
+is the date which you will use to check whether the new or old policy will apply.
+"""
+
+RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from immediate record deletion if possible.
+
+The config accepts a list of dictionaries with "label" and "message" key-value pairs.
+The "label" is used as the checklist question item, and the "message" is displayed in
+case the user selects "Yes" on the checklist item.
+
+Example config value:
+
+.. code-block:: python
+
+    RDM_IMMEDIATE_RECORD_DELETION_CHECKLIST = [
+        {
+            "label": _("I want to change the metadata (title, description, etc.)"),
+            "message": _(
+                "You can edit the metadata of a published record at any time."
+            ),
+        },
+        {
+            "label": _("I forgot to submit to a community"),
+            "message": _(
+                "You can submit a published record to a community by going to the "
+                "record landing page and selecting the cog in the communities sidebar."
+            ),
+        },
+    ]
+"""
+
+RDM_REQUEST_RECORD_DELETION_ENABLED = False
+"""Allow users to request record deletion."""
+
+RDM_REQUEST_RECORD_DELETION_POLICIES = [RequestDeletionPolicy()]
+"""List of policies for record deletion requests."""
+
+RDM_REQUEST_RECORD_DELETION_CHECKLIST = []
+"""Checklist which appears on the modal to redirect user from record deletion request if possible."""
 
 #
 # Record communities
@@ -263,6 +330,14 @@ RDM_SORT_OPTIONS = {
     ),
     "mostdownloaded": dict(
         title=_("Most downloaded"), fields=["-stats.all_versions.unique_downloads"]
+    ),
+    "newestactivity": dict(
+        title=_("Newest activity"),
+        fields=["-last_activity_at"],
+    ),
+    "oldestactivity": dict(
+        title=_("Oldest activity"),
+        fields=["last_activity_at"],
     ),
 }
 """Definitions of available record sort options.

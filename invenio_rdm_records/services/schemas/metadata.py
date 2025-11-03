@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2020-2024 CERN.
+# Copyright (C) 2020-2025 CERN.
 # Copyright (C) 2020 Northwestern University.
 # Copyright (C) 2021-2025 Graz University of Technology.
 #
@@ -48,6 +48,10 @@ record_personorg_schemes = LocalProxy(
 
 record_identifiers_schemes = LocalProxy(
     lambda: current_app.config["RDM_RECORDS_IDENTIFIERS_SCHEMES"]
+)
+
+record_related_identifiers_schemes = LocalProxy(
+    lambda: current_app.config["RDM_RECORDS_RELATED_IDENTIFIERS_SCHEMES"]
 )
 
 record_location_schemes = LocalProxy(
@@ -269,7 +273,7 @@ class RelatedIdentifierSchema(IdentifierSchema):
 
     def __init__(self, **kwargs):
         """Constructor."""
-        super().__init__(allowed_schemes=record_identifiers_schemes, **kwargs)
+        super().__init__(allowed_schemes=record_related_identifiers_schemes, **kwargs)
 
     relation_type = fields.Nested(VocabularySchema)
     resource_type = fields.Nested(VocabularySchema)
@@ -300,7 +304,7 @@ class ReferenceSchema(IdentifierSchema):
     def __init__(self, **kwargs):
         """Constructor."""
         super().__init__(
-            allowed_schemes=record_identifiers_schemes,
+            allowed_schemes=record_related_identifiers_schemes,
             identifier_required=False,
             **kwargs,
         )
